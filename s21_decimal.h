@@ -31,6 +31,7 @@ void s21_clear_big_decimal(s21_big_decimal *source) ;
 void s21_clear_decimal(s21_decimal *source);
 int s21_get_bit(int source, int index);
 void s21_set_bit(int *source, int index) ;
+void s21_set_no_bit(int *source, int index) ;
 
 
 

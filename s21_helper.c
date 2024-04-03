@@ -72,6 +72,10 @@ void s21_set_bit(int *source, int index) {
     * source = *source | (1U << index);
 }
 
+void s21_set_no_bit(int *source, int index) {
+    * source = *source & ~(1U << index);
+}
+
 /**
  * @brief Функция проверяет четность мантисы
  * @param check_value младший бит числа (нулевой int)
