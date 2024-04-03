@@ -21,6 +21,11 @@ typedef struct s21_big_decimal {
     int bits[8];
 } s21_big_decimal;
 
+int s21_get_sign(int checkable_value);
+int s21_get_scale(int checkable_value) ;
+void s21_set_sign(int *mutable_value, int sign) ;
+void s21_set_scale(int *mutable_value, int scale);
+int s21_mantissa_even(int check_value) ;
 
 
 
