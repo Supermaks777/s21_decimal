@@ -1,5 +1,7 @@
 #include "s21_decimal.h"
 
+//это тестовое изменение
+
 /**
  * @brief Функция определяет знак по контрольному int
  * @param check_value контрольный int (3й для decimal, 7й для big_decimal)
