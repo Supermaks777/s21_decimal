@@ -48,6 +48,30 @@ void s21_set_scale(int *mutable_value, int scale) {
     *mutable_value = ctrl_bit.integer;
 }
 
+void s21_convert_to_big_decimal(s21_decimal source, s21_big_decimal * result){
+    s21_clear_big_decimal(result);
+    result->bits[0] = source.bits[0];
+    result->bits[1] = source.bits[1];
+    result->bits[2] = source.bits[2];
+    result->bits[7] = source.bits[3];
+}
+
+void s21_clear_big_decimal(s21_big_decimal *source) {
+    for(int i = 0; i < sizeof(source); i++) source->bits[i] = 0;
+}
+
+void s21_clear_decimal(s21_decimal *source) {
+    for(int i = 0; i < sizeof(source); i++) source->bits[i] = 0;
+}
+
+int s21_get_bit(int source, int index){
+    return !!(source & (1U << index));
+}
+
+void s21_set_bit(int *source, int index) {
+    * source = *source | (1U << index);
+}
+
 /**
  * @brief Функция проверяет четность мантисы
  * @param check_value младший бит числа (нулевой int)

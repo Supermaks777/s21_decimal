@@ -26,6 +26,18 @@ int s21_get_scale(int checkable_value) ;
 void s21_set_sign(int *mutable_value, int sign) ;
 void s21_set_scale(int *mutable_value, int scale);
 int s21_mantissa_even(int check_value) ;
+void s21_convert_to_big_decimal(s21_decimal source, s21_big_decimal * result);
+void s21_clear_big_decimal(s21_big_decimal *source) ;
+void s21_clear_decimal(s21_decimal *source);
+int s21_get_bit(int source, int index);
+void s21_set_bit(int *source, int index) ;
+
+
+
+
+
+
+int s21_binary_add(s21_big_decimal value_1, s21_big_decimal value_2, s21_big_decimal * result);
 
 
 
