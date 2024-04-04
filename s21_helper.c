@@ -39,7 +39,7 @@ void s21_set_sign(int *mutable_value, int sign) {
 /**
  * @brief Процедура устанавливает масштаб контрольному int
  * @param mutable_value указатель на контрольный int (3й для decimal, 7й для big_decimal)
- * @param sign необходимый масштаб 
+ * @param sign необходимый масштаб (int)
  */
 void s21_set_scale(int *mutable_value, int scale) {
     control_bit ctrl_bit;
@@ -48,32 +48,134 @@ void s21_set_scale(int *mutable_value, int scale) {
     *mutable_value = ctrl_bit.integer;
 }
 
+/**
+ * @brief Процедура конвертирует decimal в big_decimal, перенося только мантиссу (т.е. первые 3 int)
+ * @param source значение, которое необходимо конвертировать (s21_decimal)
+ * @param result указатель на результат (s21_big_decimal *)
+ */
 void s21_convert_to_big_decimal(s21_decimal source, s21_big_decimal * result){
     s21_clear_big_decimal(result);
-    result->bits[0] = source.bits[0];
-    result->bits[1] = source.bits[1];
-    result->bits[2] = source.bits[2];
-    result->bits[7] = source.bits[3];
+    result->bits[0] = (unsigned) source.bits[0];
+    result->bits[1] = (unsigned) source.bits[1];
+    result->bits[2] = (unsigned) source.bits[2];
 }
 
+/**
+ * @brief Функция конвертирует decimal в big_decimal, перенося только мантиссу (т.е. первые 3 int)
+ * @param source значение, которое необходимо конвертировать (s21_decimal)
+ * @return получшившийся big_decimal
+ */
+s21_big_decimal s21_convert_to_big_decimal_light(s21_decimal source){
+    s21_big_decimal result = s21_get_zero_big_decimal();
+    result.bits[0] = (unsigned) source.bits[0];
+    result.bits[1] = (unsigned) source.bits[1];
+    result.bits[2] = (unsigned) source.bits[2];
+    return result;
+}
+
+/**
+ * @brief Процедура очищает big_decimal, зануляя его int
+ * @param source указатель на результат (s21_big_decimal *)
+ */
 void s21_clear_big_decimal(s21_big_decimal *source) {
-    for(int i = 0; i < sizeof(source); i++) source->bits[i] = 0;
+    for(int i = 0; i < BIG_DECIMAL_SIZE; i++) source->bits[i] = 0;
 }
 
+/**
+ * @brief Процедура очищает big_decimal, зануляя его int
+ * @param source указатель на результат (s21_decimal *)
+ */
 void s21_clear_decimal(s21_decimal *source) {
-    for(int i = 0; i < sizeof(source); i++) source->bits[i] = 0;
+    for(int i = 0; i < DECIMAL_SIZE; i++) source->bits[i] = 0;
 }
 
+/**
+ * @brief Функция определяет значение заданного бита
+ * @param source заданный int в котором будет осуществляться изменение (int)
+ * @param index положение бита (int)
+ * @return значение искомого бита (int)
+ */
 int s21_get_bit(int source, int index){
     return !!(source & (1U << index));
 }
 
+/**
+ * @brief Процедура устанавливает 1 в заданном месте заданного бита
+ * @param source указатель на изменяемый int
+ * @param index положение бита (int)
+ */
 void s21_set_bit(int *source, int index) {
     * source = *source | (1U << index);
 }
 
+/**
+ * @brief Процедура устанавливает 0 в заданном месте заданного бита
+ * @param source указатель на изменяемый int
+ * @param index положение бита (int)
+ */
 void s21_set_no_bit(int *source, int index) {
     * source = *source & ~(1U << index);
+}
+
+/**
+ * @brief Функция возвращает пустой big_decimal с зануленными интами
+ * @return пустой big_decimal
+ */
+s21_big_decimal s21_get_zero_big_decimal() {
+    s21_big_decimal temp;
+    for (int i = 0; i < BIG_DECIMAL_SIZE; i++) temp.bits[i] = 0;
+    return temp;
+}
+
+/**
+ * @brief Функция осуществляет левое смещение в заданном big_decimal на заданное количество знаков
+ * @param num указатель на заданный big_decimal, в котором будет реализовано левое смещение (s21_big_decimal)
+ * @param shift_value задание количество знаков для смещения (int)
+ * @return результат операции: 0 - все ОК; 1 - произошло переполнение
+ */
+int s21_shift_left(s21_big_decimal *num, int shift_value) {
+    s21_big_decimal temp_value = *num;    
+    unsigned memo = 0;
+    unsigned temp_int = 0;
+
+    for (int i = 0; i < BIG_DECIMAL_SIZE; i++) {
+        temp_int = temp_value.bits[i];
+        temp_value.bits[i] <<= shift_value;
+        temp_value.bits[i] |= memo;
+        memo = temp_int >> (32 - shift_value);
+    };
+    if (!memo) *num = temp_value;
+    return !!memo;
+}
+
+/**
+ * @brief Функция осуществляет левое смещение в заданном big_decimal на заданное количество знаков
+ * @param num заданный big_decimal, относительно которого будет реализовано левое смещение (s21_big_decimal)
+ * @param shift_value задание количество знаков для смещения (int)
+ * @return результирующий big_decimal
+ */
+s21_big_decimal s21_shift_left_light(s21_big_decimal num, int shift_value){
+    unsigned memo = 0;
+    unsigned temp_int = 0;
+    for (int i = 0; i < BIG_DECIMAL_SIZE; i++) {
+        temp_int = num.bits[i];
+        num.bits[i] <<= shift_value;
+        num.bits[i] |= memo;
+        memo = temp_int >> (32 - shift_value);
+    };
+    return num;    
+}
+
+/**
+ * @brief Функция умножает значение мантиссы на 10 (10x = 8x + 2x = x<<3 + x<<1)
+ * @param num заданный big_decimal (s21_big_decimal)
+ * @return результирующий big_decimal
+ */
+s21_big_decimal s21_increase_order_light(s21_big_decimal num) {
+    s21_big_decimal term_1 = s21_shift_left_light(num, 3);
+    s21_big_decimal term_2 = s21_shift_left_light(num, 1);
+
+    return s21_binary_add_light(term_1, term_2);
 }
 
 /**

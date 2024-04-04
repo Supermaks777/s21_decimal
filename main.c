@@ -1,4 +1,4 @@
-#include <stdio.h>
+// #include <stdio.h>
 // #include "s21_helper.c"
 #include "s21_decimal.h"
 
@@ -9,15 +9,33 @@ int main(){
     // printf("sing: %d\n", s21_get_sign(var));
     // printf("scale: %d\n", s21_get_scale(var));
     // printf("number (10): %d\n", var);
-    s21_big_decimal val1;
-    s21_big_decimal val2;
-    s21_big_decimal res;
-    s21_clear_big_decimal(&val1);
-    s21_clear_big_decimal(&val2);
-    s21_clear_big_decimal(&res);
-    val1.bits[0] = 5;
+    s21_big_decimal val1 = s21_get_zero_big_decimal();
+    s21_big_decimal val2 = s21_get_zero_big_decimal();
+    s21_big_decimal res = s21_get_zero_big_decimal();
+    // s21_clear_big_decimal(&val1);
+    // s21_clear_big_decimal(&val2);
+    // s21_clear_big_decimal(&res);
+    val1.bits[0] = 6;
     val2.bits[0] = 7;
-    s21_binary_add(val1, val2, &res);
-    printf("result: %d\n", res.bits[0]);
+    // res = s21_binary_add_light(val1, val2);
+    // printf("add: %d\n", res.bits[0]);
+    
+    // res = s21_shift_left_light(res, 3);
+    // printf("swith left (3): %d\n", res.bits[0]);
+
+    // res = s21_increase_order_light(res);
+    // printf("increase order: %d\n", res.bits[0]);
+    printf("num_1: %d - %d\n", val1.bits[0], val1.bits[1]);
+    printf("num_2: %d - %d\n", val2.bits[0], val2.bits[1]);
+
+    res = s21_binary_mult_light(val1, val2);
+    printf("mult: %d - %d - %d - %d\n", res.bits[0], res.bits[1], res.bits[2], res.bits[3]);
+    
+    res = s21_shift_left_light(res, 3);
+    printf("swith left (3): %d - %d - %d - %d\n", res.bits[0], res.bits[1], res.bits[2], res.bits[3]);
+
+    res = s21_increase_order_light(res);
+    printf("increase order: %d - %d - %d - %d\n", res.bits[0], res.bits[1], res.bits[2], res.bits[3]);
+
     return 0;
 }
