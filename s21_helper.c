@@ -187,6 +187,24 @@ int s21_mantissa_even(int check_value) {
     return (check_value & 1) != 1;
 }
 
+/**
+ * @brief Процедура печатает заданный int
+ * @param source заданное значение (int)
+ */
+void s21_print_binary(int source) {
+    for (int i = 31; i >= 0; i--) printf("%d", (source >> i) & 1);
+    printf("\n");
+}
+
+/**
+ * @brief Процедура печатает заданный decimal
+ * @param source заданное значение (big_decimal)
+ */
+void s21_print_b_decimal(s21_big_decimal source) {
+    for (int i = 0; i < BIG_DECIMAL_SIZE; i++) s21_print_binary(source.bits[BIG_DECIMAL_SIZE - i - 1]);
+    printf("\n");
+}
+
 // int s21_get_sign(s21_decimal decimal) {
 //     control_bit ctrl_bit;
 //     ctrl_bit.integer = decimal.bits[3];

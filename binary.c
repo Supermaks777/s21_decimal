@@ -23,7 +23,7 @@ int s21_binary_add(s21_big_decimal value_1, s21_big_decimal value_2, s21_big_dec
 }
 
 /**
- * @brief Функция делает бинарное сложение двух чисел без проверок
+ * @brief Функция делает бинарное сложение двух чисел (без проверок)
  * @param value_1 первое слагаемое (s21_big_decimal)
  * @param value_2 второе слагаемое (s21_big_decimal)
  * @return сумма (s21_big_decimal)
@@ -83,3 +83,4 @@ s21_big_decimal s21_binary_mult_light(s21_big_decimal value_1, s21_big_decimal v
     }
     return result;
 }
+

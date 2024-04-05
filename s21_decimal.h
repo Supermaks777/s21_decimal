@@ -57,6 +57,8 @@ s21_big_decimal s21_convert_to_big_decimal_light(s21_decimal source);
 void s21_convert_to_big_decimal(s21_decimal source, s21_big_decimal * result);
 s21_big_decimal s21_binary_mult_light(s21_big_decimal value_1, s21_big_decimal value_2);
 
+void s21_print_binary(int source);
+void s21_print_b_decimal(s21_big_decimal source) ;
 
 
 #endif  //  SRC_S21_DECIMAL_TYPES_H_
