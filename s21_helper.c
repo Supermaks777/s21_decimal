@@ -191,7 +191,7 @@ int s21_mantissa_even(int check_value) {
  * @brief Процедура печатает заданный int
  * @param source заданное значение (int)
  */
-void s21_print_binary(int source) {
+void s21_print_binary(unsigned source) {
     for (int i = 31; i >= 0; i--) printf("%d", (source >> i) & 1);
     printf("\n");
 }
@@ -200,7 +200,7 @@ void s21_print_binary(int source) {
  * @brief Процедура печатает заданный decimal
  * @param source заданное значение (big_decimal)
  */
-void s21_print_b_decimal(s21_big_decimal source) {
+void s21_print_big_decimal(s21_big_decimal source) {
     for (int i = 0; i < BIG_DECIMAL_SIZE; i++) s21_print_binary(source.bits[BIG_DECIMAL_SIZE - i - 1]);
     printf("\n");
 }
@@ -214,27 +214,27 @@ void s21_print_b_decimal_10(s21_big_decimal source) {
     printf("\n");
 }
 
-/**
- * @brief Функция выдает инвертированное значение int
- * @param source заданное значение (unsigned)
- * @return инвертированное значение(unsigned)
- */
-int s21_get_invert_int(int source) {
-    return (~source);
-}
+// /** НЕАКТУАЛЬНО, т.к. работает только на интах, а у меня беззнаковые используются
+//  * @brief Функция выдает инвертированное значение int
+//  * @param source заданное значение (unsigned)
+//  * @return инвертированное значение(unsigned)
+//  */
+// int s21_get_invert_int(int source) {
+//     return (~source);
+// }
 
-/**
- * @brief Функция выдает двоичное дополнение к заданному big_decimal
- * @param source заданное значение (big_decimal)
- * @return двоичное дополнение (big_decimal)
- */
-s21_big_decimal s21_get_complement(s21_big_decimal source) {
-    s21_big_decimal result = s21_get_zero_big_decimal(); 
-    s21_big_decimal one = {0,0,0,1};
-    for (int i = 0; i < BIG_DECIMAL_SIZE; i++) result.bits[i] = s21_get_invert_int(source.bits[i]);
-    result = s21_binary_add_light(result, one);
-    return result;
-}
+// /** НЕАКТУАЛЬНО, т.к. работает только на интах, а у меня беззнаковые используются
+//  * @brief Функция выдает двоичное дополнение к заданному big_decimal
+//  * @param source заданное значение (big_decimal)
+//  * @return двоичное дополнение (big_decimal)
+//  */
+// s21_big_decimal s21_get_complement(s21_big_decimal source) {
+//     s21_big_decimal result = s21_get_zero_big_decimal(); 
+//     s21_big_decimal one = {0,0,0,1};
+//     for (int i = 0; i < BIG_DECIMAL_SIZE; i++) result.bits[i] = s21_get_invert_int(source.bits[i]);
+//     result = s21_binary_add_light(result, one);
+//     return result;
+// }
 
 
 // int s21_get_sign(s21_decimal decimal) {
