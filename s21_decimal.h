@@ -24,7 +24,7 @@ typedef union control_bit {
 } control_bit;
 
 typedef struct s21_big_decimal {
-    unsigned bits[8];
+    int bits[8];
 } s21_big_decimal;
 
 int s21_get_sign(int checkable_value);
@@ -59,6 +59,13 @@ s21_big_decimal s21_binary_mult_light(s21_big_decimal value_1, s21_big_decimal v
 
 void s21_print_binary(int source);
 void s21_print_b_decimal(s21_big_decimal source) ;
+
+int s21_get_invert_int(int source) ;
+s21_big_decimal s21_get_complement(s21_big_decimal source) ;
+
+s21_big_decimal s21_binary_sub_light(s21_big_decimal minuend, s21_big_decimal subtrahend);
+s21_big_decimal s21_binary_sub_light2(s21_big_decimal minuend, s21_big_decimal subtrahend);
+void s21_print_b_decimal_10(s21_big_decimal source) ;
 
 
 #endif  //  SRC_S21_DECIMAL_TYPES_H_
