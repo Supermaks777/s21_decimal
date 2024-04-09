@@ -148,8 +148,9 @@ int s21_shift_left(s21_big_decimal *num, int shift_value) {
     return !!memo;
 }
 
+
 /**
- * @brief Функция осуществляет левое смещение в заданном big_decimal на заданное количество знаков
+ * @brief Функция осуществляет левое смещение в заданном big_decimal на заданное количество знаков, но не больше размера инта
  * @param num заданный big_decimal, относительно которого будет реализовано левое смещение (s21_big_decimal)
  * @param shift_value задание количество знаков для смещения (int)
  * @return результирующий big_decimal
@@ -164,6 +165,93 @@ s21_big_decimal s21_shift_left_light(s21_big_decimal num, int shift_value){
         memo = temp_int >> (32 - shift_value);
     };
     return num;    
+}
+
+/**
+ * @brief Функция осуществляет левое смещение в заданном big_decimal на заданное количество знаков, но в пределах одного инта
+ * @param num заданный big_decimal, относительно которого будет реализовано левое смещение (s21_big_decimal)
+ * @param shift_value задание количество знаков для смещения (int)
+ * @return результирующий big_decimal
+ */
+s21_big_decimal s21_shift_left_inside(s21_big_decimal num, int shift_value){
+    unsigned memo = 0;
+    unsigned temp_int = 0;
+    for (int i = 0; i < BIG_DECIMAL_SIZE; i++) {
+        temp_int = num.bits[i];
+        num.bits[i] <<= shift_value;
+        num.bits[i] |= memo;
+        memo = temp_int >> (32 - shift_value);
+    };
+    return num;    
+}
+
+/**
+ * @brief Функция осуществляет левое смещение в заданном big_decimal на один бит
+ * @param num заданный big_decimal, относительно которого будет реализовано левое смещение (s21_big_decimal)
+ * @return результирующий big_decimal
+ */
+s21_big_decimal s21_shift_left_single(s21_big_decimal num){
+    unsigned memo = 0;
+    unsigned temp_int = 0;
+    for (int i = 0; i < BIG_DECIMAL_SIZE; i++) {
+        temp_int = num.bits[i];
+        num.bits[i] <<= 1;
+        num.bits[i] |= memo;
+        memo = temp_int >> (32 - shift_value);
+    };
+    return num;    
+}
+
+/**
+ * @brief Функция осуществляет правое смещение в заданном big_decimal на один бит
+ * @param num заданный big_decimal, относительно которого будет реализовано левое смещение (s21_big_decimal)
+ * @return результирующий big_decimal
+ */
+s21_big_decimal s21_shift_left_single(s21_big_decimal num){
+    unsigned memo = 0;
+    unsigned temp_int = 0;
+    for (int i = 0; i < BIG_DECIMAL_SIZE; i++) {
+        temp_int = num.bits[i];
+        num.bits[i] <<= 1;
+        num.bits[i] |= memo;
+        memo = temp_int >> (32 - shift_value);
+    };
+    return num;    
+}
+
+/**
+ * @brief Функция осуществляет левое смещение в заданном big_decimal на заданное количество знаков, но в пределах одного инта
+ * @param num заданный big_decimal, относительно которого будет реализовано левое смещение (s21_big_decimal)
+ * @param shift_value задание количество знаков для смещения (int)
+ * @return результирующий big_decimal
+ */
+s21_big_decimal s21_shift_left_outside(s21_big_decimal num, int shift_value){
+    while (shift_value > 32) {
+        shift_value -= 32;
+        for (int i = 0; i < BIG_DECIMAL_SIZE - 1; i++) {
+            num.bits[i] = num.bits[i + 1];
+        }
+    }
+    num = s21_shift_left_inside(num, shift_value);
+    return num;    
+}
+    
+/**
+ * @brief Функция проверяет, что check_value больше чем reference
+ * @param check_value проверяемое значение (s21_big_decimal)
+ * @param reference эталонное значение (int)
+ * @return результат сравнения: 1 - проверяемое значение больше эталона, 0 - они равны, -1 - проверяемое значение меньше эталона
+ */
+s21_big_decimal s21_binary_compare(s21_big_decimal check_value, s21_big_decimal reference){
+    int result = 0;
+    int flag_exit = 0;
+    for (int i = BIG_DECIMAL_SIZE - 1; i >= 0 && !flag_exit; i--){
+        for (int j = INT_SIZE - 1; j >= 0 && !flag_exit; j--){
+            if (s21_get_bit(check_value.bits[i], j) < s21_get_bit(reference.bits[i], j)) flag_exit = 1;
+        }
+    }
+    if (flag_exit) result = -1;
+    else result = !(s21_get_bit(check_value.bits[0],0) == s21_get_bit(reference.bits[0],0));
 }
 
 /**

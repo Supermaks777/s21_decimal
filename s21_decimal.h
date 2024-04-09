@@ -6,6 +6,7 @@
 
 #define BIG_DECIMAL_SIZE 8
 #define DECIMAL_SIZE 8
+#define INT_SIZE 32
 
 //0-2 int мантисса, 3й - контрольный
 typedef struct s21_decimal {

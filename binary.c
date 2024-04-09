@@ -99,8 +99,8 @@ s21_big_decimal s21_binary_mult_light(s21_big_decimal factor_1, s21_big_decimal 
  * @brief Функция делает бинарное деление двух чисел и возвращает его по ссылке при условии целочисленного деления
  * @param dividend делимое (s21_big_decimal)
  * @param divisor делитель (s21_big_decimal)
- * @param result 
- * @return частное (s21_big_decimal)
+ * @param result ссылка на результат (s21_big_decimal)
+ * @return наличие остатка: 1 - нет отстатка, деление полное; 0 - есть остаток (s21_big_decimal)
  */
 s21_big_decimal s21_binary_dev_light(s21_big_decimal dividend, s21_big_decimal divisor){
     s21_big_decimal result = s21_get_zero_big_decimal();
@@ -112,4 +112,29 @@ s21_big_decimal s21_binary_dev_light(s21_big_decimal dividend, s21_big_decimal d
         }
     }
     return result;
+
+//////////////отсюда пошел новый код
+    for (int bit = (BIG_DECIMAL_SIZE * INT_SIZE); bit >= 0; i--){
+        
+    }
+
+}
+
+
+void binary_division(int dividend, int divisor) {
+    int quotient = 0;
+    int remainder = 0;
+    
+    for (int bit = 31; bit >= 0; bit--) {
+        remainder = (remainder << 1) | ((dividend >> bit) & 1);
+        if (remainder >= divisor) {
+            quotient = (quotient << 1) | 1;
+            remainder -= divisor;
+        } else {
+            quotient = quotient << 1;
+        }
+    }
+
+    printf("Quotient: %u\n", quotient);
+    printf("Remainder: %u\n", remainder);
 }
