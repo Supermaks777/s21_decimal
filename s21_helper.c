@@ -1,7 +1,5 @@
 #include "s21_decimal.h"
 
-//это тестовое изменение
-
 /**
  * @brief Функция определяет знак по контрольному int
  * @param check_value контрольный int (3й для decimal, 7й для big_decimal)
@@ -14,7 +12,7 @@ int s21_get_sign(int checkable_value) {
 }
 
 /**
- * @brief Функция определяет масштаб числа по контрольному int
+ * @brief Функция определяет скейл по контрольному int
  * @param check_value контрольный int (3й для decimal, 7й для big_decimal)
  * @return искомый масштаб (степень десятки в знаменателе числа)
  */
@@ -37,7 +35,7 @@ void s21_set_sign(int *mutable_value, int sign) {
 }
 
 /**
- * @brief Процедура устанавливает масштаб контрольному int
+ * @brief Процедура скейл контрольному int
  * @param mutable_value указатель на контрольный int (3й для decimal, 7й для big_decimal)
  * @param sign необходимый масштаб (int)
  */
@@ -82,7 +80,7 @@ void s21_clear_big_decimal(s21_big_decimal *source) {
 }
 
 /**
- * @brief Процедура очищает big_decimal, зануляя его int
+ * @brief Процедура очищает decimal, зануляя его int
  * @param source указатель на результат (s21_decimal *)
  */
 void s21_clear_decimal(s21_decimal *source) {
@@ -128,34 +126,12 @@ s21_big_decimal s21_get_zero_big_decimal() {
 }
 
 /**
- * @brief Функция осуществляет левое смещение в заданном big_decimal на заданное количество знаков
- * @param num указатель на заданный big_decimal, в котором будет реализовано левое смещение (s21_big_decimal)
- * @param shift_value задание количество знаков для смещения (int)
- * @return результат операции: 0 - все ОК; 1 - произошло переполнение
- */
-int s21_shift_left(s21_big_decimal *num, int shift_value) {
-    s21_big_decimal temp_value = *num;    
-    unsigned memo = 0;
-    unsigned temp_int = 0;
-
-    for (int i = 0; i < BIG_DECIMAL_SIZE; i++) {
-        temp_int = temp_value.bits[i];
-        temp_value.bits[i] <<= shift_value;
-        temp_value.bits[i] |= memo;
-        memo = temp_int >> (32 - shift_value);
-    };
-    if (!memo) *num = temp_value;
-    return !!memo;
-}
-
-
-/**
- * @brief Функция осуществляет левое смещение в заданном big_decimal на заданное количество знаков, но не больше размера инта
+ * @brief Функция осуществляет левое смещение в заданном big_decimal на заданное количество знаков, но в пределах одного инта
  * @param num заданный big_decimal, относительно которого будет реализовано левое смещение (s21_big_decimal)
  * @param shift_value задание количество знаков для смещения (int)
  * @return результирующий big_decimal
  */
-s21_big_decimal s21_shift_left_light(s21_big_decimal num, int shift_value){
+s21_big_decimal s21_shift_left_into_integer(s21_big_decimal num, int shift_value){
     unsigned memo = 0;
     unsigned temp_int = 0;
     for (int i = 0; i < BIG_DECIMAL_SIZE; i++) {
@@ -167,76 +143,39 @@ s21_big_decimal s21_shift_left_light(s21_big_decimal num, int shift_value){
     return num;    
 }
 
-/**
- * @brief Функция осуществляет левое смещение в заданном big_decimal на заданное количество знаков, но в пределах одного инта
- * @param num заданный big_decimal, относительно которого будет реализовано левое смещение (s21_big_decimal)
- * @param shift_value задание количество знаков для смещения (int)
- * @return результирующий big_decimal
- */
-s21_big_decimal s21_shift_left_inside(s21_big_decimal num, int shift_value){
-    unsigned memo = 0;
-    unsigned temp_int = 0;
-    for (int i = 0; i < BIG_DECIMAL_SIZE; i++) {
-        temp_int = num.bits[i];
-        num.bits[i] <<= shift_value;
-        num.bits[i] |= memo;
-        memo = temp_int >> (32 - shift_value);
-    };
-    return num;    
+int s21_bit_compare(int check_value, int reference){
+    int result;
+    if (check_value == reference) result = 0;
+    if (check_value > reference) result = 1;
+    if (check_value < reference) result = -1;
+    return result;
 }
 
-// /**
-//  * @brief Функция осуществляет левое смещение в заданном big_decimal на один бит
-//  * @param num заданный big_decimal, относительно которого будет реализовано левое смещение (s21_big_decimal)
-//  * @return результирующий big_decimal
-//  */
-// s21_big_decimal s21_shift_left_single(s21_big_decimal num){
-//     unsigned memo = 0;
-//     unsigned temp_int = 0;
-//     for (int i = 0; i < BIG_DECIMAL_SIZE; i++) {
-//         temp_int = num.bits[i];
-//         num.bits[i] <<= 1;
-//         num.bits[i] |= memo;
-//         memo = temp_int >> (32 - shift_value);
-//     };
-//     return num;    
-// }
-
-// /**
-//  * @brief Функция осуществляет правое смещение в заданном big_decimal на один бит
-//  * @param num заданный big_decimal, относительно которого будет реализовано левое смещение (s21_big_decimal)
-//  * @return результирующий big_decimal
-//  */
-// s21_big_decimal s21_shift_left_single(s21_big_decimal num){
-//     unsigned memo = 0;
-//     unsigned temp_int = 0;
-//     for (int i = 0; i < BIG_DECIMAL_SIZE; i++) {
-//         temp_int = num.bits[i];
-//         num.bits[i] <<= 1;
-//         num.bits[i] |= memo;
-//         memo = temp_int >> (32 - shift_value);
-//     };
-//     return num;    
-// }
 
 /**
- * @brief Функция осуществляет левое смещение в заданном big_decimal на заданное количество знаков, но в пределах одного инта
+ * @brief Функция осуществляет левое смещение в заданном big_decimal на заданное количество знаков (не ограничиваясь пределами инта)
  * @param num заданный big_decimal, относительно которого будет реализовано левое смещение (s21_big_decimal)
  * @param shift_value задание количество знаков для смещения (int)
  * @return результирующий big_decimal
  */
-s21_big_decimal s21_shift_left_outside(s21_big_decimal num, int shift_value){
+s21_big_decimal s21_shift_left(s21_big_decimal num, int shift_value){
     while (shift_value > 32) {
         shift_value -= 32;
         for (int i = 0; i < BIG_DECIMAL_SIZE - 1; i++) {
             num.bits[i] = num.bits[i + 1];
         }
     }
-    num = s21_shift_left_inside(num, shift_value);
+    num = s21_shift_left_into_integer(num, shift_value);
     return num;    
 }
 
-s21_big_decimal s21_shift_right_inside(s21_big_decimal num, int shift_value){
+/**
+ * @brief Функция осуществляет правое смещение в заданном big_decimal на заданное количество знаков (в пределах одного integer)
+ * @param num заданный big_decimal, относительно которого будет реализовано правое смещение (s21_big_decimal)
+ * @param shift_value задание количество знаков для смещения (int)
+ * @return результирующий big_decimal
+ */
+s21_big_decimal s21_shift_right_into_integer(s21_big_decimal num, int shift_value){
     unsigned memo = 0;
     unsigned temp_int = 0;
     for (int i = BIG_DECIMAL_SIZE - 1; i >= 0; i--) {
@@ -248,14 +187,20 @@ s21_big_decimal s21_shift_right_inside(s21_big_decimal num, int shift_value){
     return num;    
 }
 
-s21_big_decimal s21_shift_right_outside(s21_big_decimal num, int shift_value){
+/**
+ * @brief Функция осуществляет правое смещение в заданном big_decimal на заданное количество знаков (не ограничиваясь пределами инта)
+ * @param num заданный big_decimal, относительно которого будет реализовано правое смещение (s21_big_decimal)
+ * @param shift_value задание количество знаков для смещения (int)
+ * @return результирующий big_decimal
+ */
+s21_big_decimal s21_shift_right(s21_big_decimal num, int shift_value){
     while (shift_value > 32) {
         shift_value -= 32;
         for (int i = BIG_DECIMAL_SIZE - 1; i > 0; i--) {
             num.bits[i] = num.bits[i - 1];
         }
     }
-    num = s21_shift_right_inside(num, shift_value);
+    num = s21_shift_right_into_integer(num, shift_value);
     return num;    
 }
 
@@ -279,14 +224,12 @@ int s21_get_highest_bit(s21_big_decimal source){
  */
 int s21_binary_compare(s21_big_decimal check_value, s21_big_decimal reference){
     int result = 0;
-    int flag_exit = 0;
-    for (int i = BIG_DECIMAL_SIZE - 1; i >= 0 && !flag_exit; i--){
-        for (int j = INT_SIZE - 1; j >= 0 && !flag_exit; j--){
-            if (s21_get_bit(check_value.bits[i], j) < s21_get_bit(reference.bits[i], j)) flag_exit = 1;
+    for (int i = BIG_DECIMAL_SIZE - 1; i >= 0 && !result; i--){
+        for (int j = INT_SIZE - 1; j >= 0 && !result; j--){
+            result = s21_bit_compare(s21_get_bit(check_value.bits[i], j), s21_get_bit(reference.bits[i], j));
         }
     }
-    if (flag_exit) result = -1;
-    else result = !(s21_get_bit(check_value.bits[0],0) == s21_get_bit(reference.bits[0],0));
+    return result;
 }
 
 /**
@@ -295,10 +238,9 @@ int s21_binary_compare(s21_big_decimal check_value, s21_big_decimal reference){
  * @return результирующий big_decimal
  */
 s21_big_decimal s21_increase_order_light(s21_big_decimal num) {
-    s21_big_decimal term_1 = s21_shift_left_light(num, 3);
-    s21_big_decimal term_2 = s21_shift_left_light(num, 1);
-
-    return s21_binary_add_light(term_1, term_2);
+    s21_big_decimal term_1 = s21_shift_left(num, 3);
+    s21_big_decimal term_2 = s21_shift_left(num, 1);
+    return s21_binary_add(term_1, term_2);
 }
 
 /**
@@ -316,7 +258,7 @@ int s21_mantissa_even(int check_value) {
  */
 void s21_print_binary(unsigned source) {
     for (int i = 31; i >= 0; i--) printf("%d", (source >> i) & 1);
-    printf("\n");
+    // printf("\n");
 }
 
 /**
@@ -389,4 +331,78 @@ void s21_print_b_decimal_10(s21_big_decimal source) {
 // //проверяет четность мантиссы (не всего числа)
 // int s21_mantissa_even(s21_decimal value) {
 //     return (value.bits[0] & 1) != 1;
+// }
+
+// /**
+//  * @brief Функция осуществляет левое смещение в заданном big_decimal на один бит
+//  * @param num заданный big_decimal, относительно которого будет реализовано левое смещение (s21_big_decimal)
+//  * @return результирующий big_decimal
+//  */
+// s21_big_decimal s21_shift_left_single(s21_big_decimal num){
+//     unsigned memo = 0;
+//     unsigned temp_int = 0;
+//     for (int i = 0; i < BIG_DECIMAL_SIZE; i++) {
+//         temp_int = num.bits[i];
+//         num.bits[i] <<= 1;
+//         num.bits[i] |= memo;
+//         memo = temp_int >> (32 - shift_value);
+//     };
+//     return num;    
+// }
+
+// /**
+//  * @brief Функция осуществляет правое смещение в заданном big_decimal на один бит
+//  * @param num заданный big_decimal, относительно которого будет реализовано левое смещение (s21_big_decimal)
+//  * @return результирующий big_decimal
+//  */
+// s21_big_decimal s21_shift_left_single(s21_big_decimal num){
+//     unsigned memo = 0;
+//     unsigned temp_int = 0;
+//     for (int i = 0; i < BIG_DECIMAL_SIZE; i++) {
+//         temp_int = num.bits[i];
+//         num.bits[i] <<= 1;
+//         num.bits[i] |= memo;
+//         memo = temp_int >> (32 - shift_value);
+//     };
+//     return num;    
+// }
+
+// /**
+//  * @brief Функция осуществляет левое смещение в заданном big_decimal на заданное количество знаков
+//  * @param num указатель на заданный big_decimal, в котором будет реализовано левое смещение (s21_big_decimal)
+//  * @param shift_value задание количество знаков для смещения (int)
+//  * @return результат операции: 0 - все ОК; 1 - произошло переполнение
+//  */
+// int s21_shift_left(s21_big_decimal *num, int shift_value) {
+//     s21_big_decimal temp_value = *num;    
+//     unsigned memo = 0;
+//     unsigned temp_int = 0;
+
+//     for (int i = 0; i < BIG_DECIMAL_SIZE; i++) {
+//         temp_int = temp_value.bits[i];
+//         temp_value.bits[i] <<= shift_value;
+//         temp_value.bits[i] |= memo;
+//         memo = temp_int >> (32 - shift_value);
+//     };
+//     if (!memo) *num = temp_value;
+//     return !!memo;
+// }
+
+
+// /**
+//  * @brief Функция осуществляет левое смещение в заданном big_decimal на заданное количество знаков, но не больше размера инта
+//  * @param num заданный big_decimal, относительно которого будет реализовано левое смещение (s21_big_decimal)
+//  * @param shift_value задание количество знаков для смещения (int)
+//  * @return результирующий big_decimal
+//  */
+// s21_big_decimal s21_shift_left_light(s21_big_decimal num, int shift_value){
+//     unsigned memo = 0;
+//     unsigned temp_int = 0;
+//     for (int i = 0; i < BIG_DECIMAL_SIZE; i++) {
+//         temp_int = num.bits[i];
+//         num.bits[i] <<= shift_value;
+//         num.bits[i] |= memo;
+//         memo = temp_int >> (32 - shift_value);
+//     };
+//     return num;    
 // }
