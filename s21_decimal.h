@@ -69,5 +69,14 @@ s21_big_decimal s21_binary_sub_light(s21_big_decimal minuend, s21_big_decimal su
 s21_big_decimal s21_binary_sub_light2(s21_big_decimal minuend, s21_big_decimal subtrahend);
 void s21_print_b_decimal_10(s21_big_decimal source) ;
 
+int s21_get_highest_bit(s21_big_decimal source);
+
+s21_big_decimal s21_shift_left_outside(s21_big_decimal num, int shift_value);
+int s21_binary_compare(s21_big_decimal check_value, s21_big_decimal reference);
+
+s21_big_decimal s21_shift_right_inside(s21_big_decimal num, int shift_value);
+s21_big_decimal s21_shift_right_outside(s21_big_decimal num, int shift_value);
+s21_big_decimal s21_binary_div_light(s21_big_decimal dividend, s21_big_decimal divisor, s21_big_decimal * remainder);
+
 
 #endif  //  SRC_S21_DECIMAL_TYPES_H_

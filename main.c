@@ -1,62 +1,62 @@
 
-// #include "s21_decimal.h"
+#include "s21_decimal.h"
 
-// int main(){
-//     // int var = 0;
-//     // s21_set_sign(&var, 1);
-//     // s21_set_scale(&var, 10);
-//     // printf("sing: %d\n", s21_get_sign(var));
-//     // printf("scale: %d\n", s21_get_scale(var));
-//     // printf("number (10): %d\n", var);
-//     s21_big_decimal val1 = {0, 1, 0, 0};
-//     s21_big_decimal val2 = {2, 0, 0, 0};
-//     s21_big_decimal res = s21_get_zero_big_decimal();
 
-//     printf("num_1: %u - %u - %u - %u\n", val1.bits[0], val1.bits[1], val1.bits[2], val1.bits[3]);
-//     printf("num_2: %u - %u - %u - %u\n", val2.bits[0], val2.bits[1], val2.bits[2], val2.bits[3]);
 
-//     res = s21_binary_sub_light(val1, val2);
-//     printf("result: %u - %u - %u - %u\n", res.bits[0], res.bits[1], res.bits[2], res.bits[3]);
+int main(){
+    s21_big_decimal val1 = {15450, 0, 0, 0, 0, 0, 0, 0};
+    s21_big_decimal val2 = {57, 0, 0, 0, 0, 0, 0, 0};
+    s21_big_decimal res = s21_get_zero_big_decimal();
+    s21_big_decimal remainder = s21_get_zero_big_decimal();
+
+    printf("num_1: %u - %u - %u - %u\n", val1.bits[0], val1.bits[1], val1.bits[2], val1.bits[3]);
+    printf("num_2: %u - %u - %u - %u\n", val2.bits[0], val2.bits[1], val2.bits[2], val2.bits[3]);
+
+    res = s21_binary_div_light(val1, val2, &remainder);
+    printf("result: %u - %u - %u - %u\n", res.bits[0], res.bits[1], res.bits[2], res.bits[3]);
+    printf("remainder: %u - %u - %u - %u\n", remainder.bits[0], remainder.bits[1], remainder.bits[2], remainder.bits[3]);
     
-//     // res = s21_shift_left_light(res, 3);
-//     // printf("swith left (3): %d - %d - %d - %d\n", res.bits[0], res.bits[1], res.bits[2], res.bits[3]);
+    // res = s21_shift_left_light(res, 3);
+    // printf("swith left (3): %d - %d - %d - %d\n", res.bits[0], res.bits[1], res.bits[2], res.bits[3]);
 
-//     // res = s21_increase_order_light(res);
-//     // printf("increase order: %d - %d - %d - %d\n", res.bits[0], res.bits[1], res.bits[2], res.bits[3]);
+    // res = s21_increase_order_light(res);
+    // printf("increase order: %d - %d - %d - %d\n", res.bits[0], res.bits[1], res.bits[2], res.bits[3]);
 
-//     s21_print_big_decimal(val1);
-//     s21_print_big_decimal(val2);
-//     s21_print_big_decimal(res);
-
-//     return 0;
-// }
-
-void binary_division(int dividend, int divisor) {
-    int quotient = 0;
-    int remainder = 0;
-    
-    for (int bit = 31; bit >= 0; bit--) {
-        remainder = (remainder << 1) | ((dividend >> bit) & 1);
-        if (remainder >= divisor) {
-            quotient = (quotient << 1) | 1;
-            remainder -= divisor;
-        } else {
-            quotient = quotient << 1;
-        }
-    }
-
-    printf("Quotient: %u\n", quotient);
-    printf("Remainder: %u\n", remainder);
-}
-
-int main() {
-    int dividend = 516;  // Делимое
-    int divisor = 100;    // Делитель
-
-    binary_division(dividend, divisor);
+    // s21_print_big_decimal(val1);
+    // s21_print_big_decimal(val2);
+    // s21_print_big_decimal(res);
+    printf("%d\n", s21_get_highest_bit(val1));
+    printf("%d\n", s21_get_highest_bit(val2));
 
     return 0;
 }
+
+// void binary_division(int dividend, int divisor) {
+//     int quotient = 0;
+//     int remainder = 0;
+    
+//     for (int bit = 31; bit >= 0; bit--) {
+//         remainder = (remainder << 1) | ((dividend >> bit) & 1);
+//         if (remainder >= divisor) {
+//             quotient = (quotient << 1) | 1;
+//             remainder -= divisor;
+//         } else {
+//             quotient = quotient << 1;
+//         }
+//     }
+
+//     printf("Quotient: %u\n", quotient);
+//     printf("Remainder: %u\n", remainder);
+// }
+
+// int main() {
+//     int dividend = 516;  // Делимое
+//     int divisor = 100;    // Делитель
+
+//     binary_division(dividend, divisor);
+
+//     return 0;
+// }
 
 // #include <stdio.h>
 

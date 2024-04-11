@@ -102,39 +102,46 @@ s21_big_decimal s21_binary_mult_light(s21_big_decimal factor_1, s21_big_decimal 
  * @param result ссылка на результат (s21_big_decimal)
  * @return наличие остатка: 1 - нет отстатка, деление полное; 0 - есть остаток (s21_big_decimal)
  */
-s21_big_decimal s21_binary_dev_light(s21_big_decimal dividend, s21_big_decimal divisor){
+s21_big_decimal s21_binary_div_light(s21_big_decimal dividend, s21_big_decimal divisor, s21_big_decimal * remainder){
     s21_big_decimal result = s21_get_zero_big_decimal();
     s21_big_decimal temp = dividend;
-    for(int i = 0; i < BIG_DECIMAL_SIZE; i++) {
-        for(int j = 0; j < 32; j++) {
-            if (s21_get_bit(divisor.bits[i], j)) result = s21_binary_add_light(result, temp);
-            temp = s21_shift_left_light(temp, 1);
-        }
-    }
+    s21_big_decimal subtrahend;
+    int shift_value;
+    shift_value = s21_get_highest_bit(dividend) - s21_get_highest_bit(divisor);
+    subtrahend = s21_shift_left_outside(divisor, shift_value);
+    for (int i = shift_value; i >= 0; i--) {
+        result = s21_shift_left_outside(result, 1);
+        if (!(s21_binary_compare(temp, subtrahend) == -1)){
+            s21_set_bit(&result.bits[0], 0);
+            subtrahend = s21_binary_sub_light(temp, subtrahend);  
+        };
+        subtrahend = s21_shift_right_outside(subtrahend, 1);
+    };
+    if (remainder != NULL) *remainder = temp;
     return result;
 
-//////////////отсюда пошел новый код
-    for (int bit = (BIG_DECIMAL_SIZE * INT_SIZE); bit >= 0; i--){
-        
-    }
+
+
+
 
 }
 
 
-void binary_division(int dividend, int divisor) {
-    int quotient = 0;
-    int remainder = 0;
+
+// void binary_division(int dividend, int divisor) {
+//     int quotient = 0;
+//     int remainder = 0;
     
-    for (int bit = 31; bit >= 0; bit--) {
-        remainder = (remainder << 1) | ((dividend >> bit) & 1);
-        if (remainder >= divisor) {
-            quotient = (quotient << 1) | 1;
-            remainder -= divisor;
-        } else {
-            quotient = quotient << 1;
-        }
-    }
+//     for (int bit = 31; bit >= 0; bit--) {
+//         remainder = (remainder << 1) | ((dividend >> bit) & 1);
+//         if (remainder >= divisor) {
+//             quotient = (quotient << 1) | 1;
+//             remainder -= divisor;
+//         } else {
+//             quotient = quotient << 1;
+//         }
+//     }
 
-    printf("Quotient: %u\n", quotient);
-    printf("Remainder: %u\n", remainder);
-}
+//     printf("Quotient: %u\n", quotient);
+//     printf("Remainder: %u\n", remainder);
+// }
