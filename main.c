@@ -4,8 +4,8 @@
 
 
 int main(){
-    s21_big_decimal val1 = {15450, 5, 0, 0, 0, 0, 0, 0};
-    s21_big_decimal val2 = {57, 0, 0, 0, 0, 0, 0, 0};
+    s21_big_decimal val1 = {317677687, 0, 0, 0, 0, 0, 0, 0};
+    s21_big_decimal val2 = {3276, 0, 0, 0, 0, 0, 0, 0};
     s21_big_decimal res = s21_get_zero_big_decimal();
     s21_big_decimal remainder = s21_get_zero_big_decimal();
 

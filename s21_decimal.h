@@ -61,6 +61,14 @@ void s21_print_big_decimal(s21_big_decimal source);
 void s21_print_b_decimal_10(s21_big_decimal source);
 
 
+void s21_standartization_(s21_decimal * source);
+int s21_is_divisible_by_10(s21_decimal source);
+void s21_normalization(s21_decimal source_1, s21_decimal source_2, s21_big_decimal * result_1, s21_big_decimal * result_2, int * scale_result);
+int s21_max(int val_1, int val_2);
+s21_big_decimal s21_scaling_up(s21_decimal source, int scale_up);
+
+
+
 
 
 #endif  //  SRC_S21_DECIMAL_TYPES_H_

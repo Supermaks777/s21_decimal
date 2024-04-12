@@ -279,6 +279,68 @@ void s21_print_b_decimal_10(s21_big_decimal source) {
     printf("\n");
 }
 
+/**
+ * @brief процедура убирает замыкающие нули (для decimal) НЕ ГОТОВО
+ * @param source число для обработки (decimal)
+ */
+void s21_standartization_(s21_decimal * source) {
+    // while (s21_is_divisible_by_10(source->bits[0]) && s21_get_scale(source->bits[3]) > 0){
+    //     printf("sd");
+    // }
+}
+
+/**
+ * @brief функция определяет делится ли число на 10
+ * @param source проверяемое число (decimal)
+ * @return результат проверки: 1 - делится на 10; 0 - не делится на 10 (int)
+ */
+ int s21_is_divisible_by_10(s21_decimal source) {
+    return (source.bits[0] % 10 == 0);
+}
+
+/**
+ * @brief процедура нормализует значения, т.е. приводит их к одному скейлу (требуется для сложения и вычитания)
+ * @param source_1 исходное число 1 (s21_decimal)
+ * @param source_2 исходное число 2 (s21_decimal)
+ * @param result_1 ссылка для сохранения результата 1 (*s21_decimal)
+ * @param result_2 ссылка для сохранения результата 2 (*s21_decimal)
+ * @param scale_result ссылка для сохранения итогового скейла (*int)
+ */
+void s21_normalization(s21_decimal source_1, s21_decimal source_2, s21_big_decimal * result_1, s21_big_decimal * result_2, int * scale_result) {
+    int scale_1 = s21_get_scale(source_1.bits[3]);
+    int scale_2 = s21_get_scale(source_2.bits[3]);
+    *scale_result = s21_max(scale_1, scale_2);
+    *result_1 = (scale_1 < scale_2) ? s21_scaling_up(source_1, scale_2 - scale_1) : s21_convert_to_big_decimal_light(source_1);
+    *result_2 = (scale_2 < scale_1) ? s21_scaling_up(source_2, scale_1 - scale_2) : s21_convert_to_big_decimal_light(source_2);
+}
+
+/**
+ * @brief функция определяет максимум из двух чисел
+ * @param val_1 проверяемое число (int)
+ * @param val_2 проверяемое число (int)
+ * @return максимальное число (int)
+ */
+int s21_max(int val_1, int val_2) {
+    return (val_1 > val_2) ? val_1 : val_2;
+}
+
+/**
+ * @brief функция преобразует децимал в бигдецимал и повышеает скейл на указанный уровень
+ * @param source исходное число (s21_decimal)
+ * @param scale_up порядок изменения масштаба (int)
+ * @return результат (s21_big_decimal)
+ */
+s21_big_decimal s21_scaling_up(s21_decimal source, int scale_up) {
+    s21_big_decimal result = s21_convert_to_big_decimal_light(source);
+    s21_big_decimal ten = {10,0,0,0,0,0,0,0};
+    for (int i = 0; i < scale_up; i++) result = s21_binary_mult(result, ten);
+    return result;
+}
+
+
+
+
+
 // /** НЕАКТУАЛЬНО, т.к. работает только на интах, а у меня беззнаковые используются
 //  * @brief Функция выдает инвертированное значение int
 //  * @param source заданное значение (unsigned)
