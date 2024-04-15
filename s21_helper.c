@@ -337,9 +337,105 @@ s21_big_decimal s21_scaling_up(s21_decimal source, int scale_up) {
     return result;
 }
 
+/**
+ * @brief функция определеяет равна ли мантиса децимал нулю
+ * @param source исходное число (s21_decimal)
+ * @return результат: 1 - истина; 0 - ложь (int)
+ */
+int is_null_decimal(s21_decimal source) {
+    return source.bits[0] == 0 && source.bits[1] == 0 && source.bits[2] == 0;
+}
 
+/**
+ * @brief проверяет корректность данных, записанных в decimal () 
+  * @param source проверяемый decimal (s21_decimal)
+ * @return int 1 - ок, 0 - некорректные данные
+ */
+int s21_is_correct_decimal(s21_decimal source) {
+    int result = 1;
 
+    control_bit ctrl_bit;
+    ctrl_bit.integer = source.bits[3];
 
+    if (ctrl_bit.parts.empty1 != 0 || ctrl_bit.parts.empty2 != 0) result = 0;
+    else if (ctrl_bit.parts.scale < 0 || ctrl_bit.parts.scale >28) result = 0;
+
+    return result;
+}
+
+/**
+ * @brief конвертирует bigdecimal в decimal
+ * @param source исходный bigdecimal (s21_bigdecimal)
+ * @return int результат преобразния (код ошибки):
+ */
+int s21_convert_to_decimal(s21_big_decimal source, s21_decimal * result, int * scale, int sign) {
+    s21_big_decimal ten = {10,0,0,0,0,0,0,0};
+    s21_big_decimal one = {1,0,0,0,0,0,0,0};
+    int err_code = 0;
+    unsigned last_digit, pre_last_digit;
+    while (s21_is_overflow_mantissa(source) && *scale) {
+        last_digit = source.bits[0] % 10;
+        pre_last_digit = (source.bits[0] / 10) % 10;
+        source = s21_binary_div(source, ten);
+        * scale -= 1;
+        if (last_digit > 5 || (last_digit = 5 && (pre_last_digit % 2))) source = s21_binary_add(source,one);
+    }
+
+    if (!s21_is_overflow_mantissa(source)){
+        s21_set_mantissa(source, result);
+        s21_set_sign(result, sign);
+        s21_set_scale(result, scale);
+    } else {
+        * result = s21_get_inf(sign);
+        s21_set_sign(result, sign);
+        err_code = (sign) ? S21_ARITHMETIC_SMALL : S21_ARITHMETIC_BIG; 
+    }
+    return err_code;
+}
+
+/**
+ * @brief переносит мантиссу в decimal
+ * @param source исходный bigdecimal (s21_bigdecimal)
+ * @param result ссылка на результат (s21_decimal)
+ */
+s21_decimal s21_set_mantissa(s21_big_decimal source, s21_decimal * result){
+    result->bits[0] = source.bits[0];
+    result->bits[1] = source.bits[1];
+    result->bits[2] = source.bits[2];
+}
+
+/**
+ * @brief проверяет переполнение при попытке переноса мантисы из bigdecimal в decimal
+ * @param source проверяемый bigdecimal (s21_bigdecimal)
+ * @return int результат проверки: 1 - переполнение; 0 - нет переполнения
+ */
+int s21_is_overflow_mantissa(s21_big_decimal source) {
+    return !!source.bits[7] || !!source.bits[6] || !!source.bits[5] || !!source.bits[4] || !!source.bits[3];
+}
+
+/**
+ * @brief выдает максимальное значение нужного знака
+ * @param source проверяемый bigdecimal (s21_bigdecimal)
+ * @param sign знак (int)
+ * @return s21_decimal результат
+ */
+s21_decimal s21_get_inf(int sign) {
+    s21_decimal result = {{0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x00}};
+    s21_set_sign(&result, sign);
+    return result;
+}
+
+// /**
+//  * @brief проверяет переполнение при попытке переноса мантисы из bigdecimal в decimal
+//  * @param source проверяемый bigdecimal (s21_bigdecimal)
+//  * @return int результат проверки: 1 - переполнение; 0 - нет переполнения
+//  */
+// s21_big_decimal s21_div_ten(s21_decimal source, int scale_up) {
+//     s21_big_decimal result = s21_convert_to_big_decimal_light(source);
+//     s21_big_decimal ten = {10,0,0,0,0,0,0,0};
+//     for (int i = 0; i < scale_up; i++) result = s21_binary_mult(result, ten);
+//     return result;
+// }
 
 // /** НЕАКТУАЛЬНО, т.к. работает только на интах, а у меня беззнаковые используются
 //  * @brief Функция выдает инвертированное значение int

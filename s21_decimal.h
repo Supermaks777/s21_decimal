@@ -28,6 +28,22 @@ typedef struct s21_big_decimal {
     unsigned bits[8];
 } s21_big_decimal;
 
+/**
+ * @brief коды ошибок арифметических операторов
+ * 0 - OK
+ * 1 - число слишком велико или равно бесконечности
+ * 2 - число слишком мало или равно отрицательной бесконечности
+ * 3 - деление на 0
+ * 4 - некорректные входные данные
+ */
+typedef enum s21_error_code {
+    S21_ARITHMETIC_OK = 0,
+    S21_ARITHMETIC_BIG = 1,
+    S21_ARITHMETIC_SMALL = 2,
+    S21_ARITHMETIC_ZERO_DIV = 3,
+    S21_ARITHMETIC_ERROR = 4
+} s21_error_code;
+
 //binary
 s21_big_decimal s21_binary_add(s21_big_decimal term_1, s21_big_decimal term_2);
 s21_big_decimal s21_binary_sub(s21_big_decimal minuend, s21_big_decimal subtrahend);
@@ -66,6 +82,8 @@ int s21_is_divisible_by_10(s21_decimal source);
 void s21_normalization(s21_decimal source_1, s21_decimal source_2, s21_big_decimal * result_1, s21_big_decimal * result_2, int * scale_result);
 int s21_max(int val_1, int val_2);
 s21_big_decimal s21_scaling_up(s21_decimal source, int scale_up);
+int is_null_decimal(s21_decimal source);
+int s21_is_correct_decimal(s21_decimal source);
 
 
 

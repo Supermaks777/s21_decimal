@@ -4,6 +4,14 @@
 
 
 int main(){
+    
+    // int p1 =1, p2 = 2;
+    // if (p1 == 0) printf("0");
+    // else if (p1 == 1) printf("1");
+    // else if (p2 == 2) printf("2");
+    // else if (p2 == 3) printf("3");
+    // return 0;
+    
     s21_big_decimal val1 = {317677687, 0, 0, 0, 0, 0, 0, 0};
     s21_big_decimal val2 = {3276, 0, 0, 0, 0, 0, 0, 0};
     s21_big_decimal res = s21_get_zero_big_decimal();
